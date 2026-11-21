@@ -1,2 +1,32 @@
-# PoolAimPr
-برای بهتر شدن
+name: Build Pool Aim Pro APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extract project
+        run: |
+          unzip -q PoolAimPro_AndroidStudio.zip -d extracted
+          cp -a extracted/PoolAimPro/. .
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build APK
+        run: gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PoolAimPro-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
